@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const subjectSchema = new mongoose.Schema(
   {
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     name: { type: String, required: true, trim: true, maxlength: 80 },
     // Classes conducted so far / classes the student attended.
     held: { type: Number, default: 0, min: 0 },

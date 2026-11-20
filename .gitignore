@@ -1,3 +1,7 @@
 node_modules/
 dist/
 .env
+
+**/.tsupgrader/
+.env.*
+!.env.example

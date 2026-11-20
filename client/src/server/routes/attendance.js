@@ -9,7 +9,7 @@ const present = (s) => ({ _id: s._id, name: s.name, ...computeWithImpact(s.toObj
 // GET /api/attendance  -> every subject with its calculated numbers + overall
 router.get('/', async (req, res, next) => {
   try {
-    const subjects = await Subject.find().sort({ createdAt: 1 });
+    const subjects = await Subject.find({ ownerId: req.user._id }).sort({ createdAt: 1 });
     const list = subjects.map(present);
     const held = list.reduce((a, s) => a + s.held, 0);
     const attended = list.reduce((a, s) => a + s.attended, 0);
@@ -39,6 +39,7 @@ router.post('/', async (req, res, next) => {
     if (!name) return res.status(400).json({ error: 'name is required' });
     const h = Math.max(0, Number(held) || 0);
     const s = await Subject.create({
+      ownerId: req.user._id,
       name,
       held: h,
       attended: Math.min(h, Math.max(0, Number(attended) || 0)),
@@ -54,7 +55,7 @@ router.post('/', async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
   try {
-    const s = await Subject.findById(req.params.id);
+    const s = await Subject.findOne({ _id: req.params.id, ownerId: req.user._id });
     if (!s) return res.status(404).json({ error: 'Subject not found' });
     for (const k of ['name', 'held', 'attended', 'upcoming', 'holidays', 'target']) {
       if (k in req.body) s[k] = k === 'name' ? req.body[k] : Number(req.body[k]);
@@ -71,7 +72,7 @@ router.patch('/:id', async (req, res, next) => {
 // POST /api/attendance/:id/mark { present: true|false }  -> record one class
 router.post('/:id/mark', async (req, res, next) => {
   try {
-    const s = await Subject.findById(req.params.id);
+    const s = await Subject.findOne({ _id: req.params.id, ownerId: req.user._id });
     if (!s) return res.status(404).json({ error: 'Subject not found' });
     s.held += 1;
     if (req.body.present) s.attended += 1;
@@ -88,7 +89,7 @@ router.post('/:id/mark', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
-    const s = await Subject.findByIdAndDelete(req.params.id);
+    const s = await Subject.findOneAndDelete({ _id: req.params.id, ownerId: req.user._id });
     if (!s) return res.status(404).json({ error: 'Subject not found' });
     res.json({ ok: true });
   } catch (e) {

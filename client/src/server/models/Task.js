@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema(
   {
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     title: { type: String, required: true, trim: true, maxlength: 120 },
     // Stored as 'YYYY-MM-DD' so time zones never shift the date.
     deadline: { type: String, required: true, match: /^\d{4}-\d{2}-\d{2}$/ },

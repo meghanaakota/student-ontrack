@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-11-20T12:43:09+05:30",
+  "generatedOnPlatform": "win32",
+  "projectType": "server",
+  "assertions": [
+    {
+      "name": "tests-pass",
+      "kind": "process",
+      "command": "npm",
+      "args": ["test"],
+      "verificationMethod": "test-results",
+      "expected": "0",
+      "timeoutSeconds": 180
+    },
+    {
+      "name": "health-endpoint-200",
+      "kind": "http-probe",
+      "startCommand": "npm",
+      "startArgs": ["run", "start"],
+      "url": "http://127.0.0.1:5000/api/health",
+      "verificationMethod": "http-status",
+      "expected": "200",
+      "timeoutSeconds": 120
+    },
+    {
+      "name": "auth-session-check",
+      "kind": "http-probe",
+      "startCommand": "npm",
+      "startArgs": ["run", "start"],
+      "url": "http://127.0.0.1:5000/api/auth/me",
+      "verificationMethod": "http-status",
+      "expected": "200",
+      "timeoutSeconds": 120
+    },
+    {
+      "name": "tasks-requires-sign-in",
+      "kind": "http-probe",
+      "startCommand": "npm",
+      "startArgs": ["run", "start"],
+      "url": "http://127.0.0.1:5000/api/tasks/",
+      "verificationMethod": "http-status",
+      "expected": "401",
+      "timeoutSeconds": 120
+    },
+    {
+      "name": "attendance-requires-sign-in",
+      "kind": "http-probe",
+      "startCommand": "npm",
+      "startArgs": ["run", "start"],
+      "url": "http://127.0.0.1:5000/api/attendance/",
+      "verificationMethod": "http-status",
+      "expected": "401",
+      "timeoutSeconds": 120
+    }
+  ]
+}

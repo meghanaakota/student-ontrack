@@ -13,7 +13,7 @@ router.get('/plan', async (req, res, next) => {
   try {
     const date = isDate(req.query.date) ? req.query.date : todayUTC();
     const capacity = Math.min(16, Math.max(0.5, Number(req.query.capacity) || 4));
-    const tasks = await Task.find({ completed: false }).lean();
+    const tasks = await Task.find({ ownerId: req.user._id, completed: false }).lean();
     const { schedule, summary } = buildSchedule(tasks, date, capacity);
     res.json({ date, capacity, plan: schedule[0], calendar: schedule, tasks: summary });
   } catch (e) {
@@ -24,7 +24,7 @@ router.get('/plan', async (req, res, next) => {
 // ---- CRUD ----
 router.get('/', async (req, res, next) => {
   try {
-    res.json(await Task.find().sort({ completed: 1, deadline: 1 }));
+    res.json(await Task.find({ ownerId: req.user._id }).sort({ completed: 1, deadline: 1 }));
   } catch (e) {
     next(e);
   }
@@ -37,6 +37,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ error: 'title, deadline (YYYY-MM-DD) and totalHours > 0 are required' });
     }
     const task = await Task.create({
+      ownerId: req.user._id,
       title,
       deadline,
       totalHours: Number(totalHours),
@@ -55,7 +56,11 @@ router.patch('/:id', async (req, res, next) => {
     const allowed = ['title', 'deadline', 'totalHours', 'minDays', 'priority', 'hoursDone', 'completed', 'notes'];
     const update = {};
     for (const k of allowed) if (k in req.body) update[k] = req.body[k];
-    const task = await Task.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, ownerId: req.user._id },
+      update,
+      { new: true, runValidators: true }
+    );
     if (!task) return res.status(404).json({ error: 'Task not found' });
     res.json(task);
   } catch (e) {
@@ -68,7 +73,7 @@ router.post('/:id/log', async (req, res, next) => {
   try {
     const hours = Number(req.body.hours);
     if (!(hours > 0)) return res.status(400).json({ error: 'hours must be greater than 0' });
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findOne({ _id: req.params.id, ownerId: req.user._id });
     if (!task) return res.status(404).json({ error: 'Task not found' });
     task.hoursDone = Math.min(task.totalHours, task.hoursDone + hours);
     if (task.hoursDone >= task.totalHours) task.completed = true;
@@ -81,7 +86,7 @@ router.post('/:id/log', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findOneAndDelete({ _id: req.params.id, ownerId: req.user._id });
     if (!task) return res.status(404).json({ error: 'Task not found' });
     res.json({ ok: true });
   } catch (e) {
