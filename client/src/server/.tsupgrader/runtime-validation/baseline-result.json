@@ -1,0 +1,121 @@
+{
+  "planHash": "33e4bde54d4a6fefdbc7757bbdfaf022f21335a1c666fd7d818e9316f967537c",
+  "phase": "baseline",
+  "recordedAtUtc": "2026-11-20T07:29:41.6434809Z",
+  "retryCount": 0,
+  "resetBaseline": true,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 0,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "tests-pass",
+        "kind": "process",
+        "verificationMethod": "test-results",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E student-ontrack-server@1.0.0 test\r\n\u003E vitest run\r\n\r\n\r\n\u001B[1m\u001B[46m RUN \u001B[49m\u001B[22m \u001B[36mv3.2.7 \u001B[39m\u001B[90mC:/Users/megha/Downloads/student-ontrack/student-ontrack/client/src/server\u001B[39m\r\n\r\n \u001B[32m\u2713\u001B[39m test/logic.test.js \u001B[2m(\u001B[22m\u001B[2m7 tests\u001B[22m\u001B[2m)\u001B[22m\u001B[32m 7\u001B[2mms\u001B[22m\u001B[39m\r\n\r\n\u001B[2m Test Files \u001B[22m \u001B[1m\u001B[32m1 passed\u001B[39m\u001B[22m\u001B[90m (1)\u001B[39m\r\n\u001B[2m      Tests \u001B[22m \u001B[1m\u001B[32m7 passed\u001B[39m\u001B[22m\u001B[90m (7)\u001B[39m\r\n\u001B[2m   Start at \u001B[22m 12:59:40\r\n\u001B[2m   Duration \u001B[22m 550ms\u001B[2m (transform 29ms, setup 0ms, collect 44ms, tests 7ms, environment 0ms, prepare 137ms)\u001B[22m\r\n\r\n",
+        "durationMs": 2301,
+        "testResults": {
+          "testFramework": "vitest",
+          "runnerDetectedFrom": "package_json",
+          "testsTotal": 7,
+          "testsPassed": 7,
+          "testsFailed": 0,
+          "testsSkipped": 0,
+          "parseFailed": false
+        }
+      },
+      {
+        "name": "health-endpoint-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n{\u0022ok\u0022:true}",
+        "durationMs": 10
+      },
+      {
+        "name": "tasks-endpoint-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n[{\u0022_id\u0022:\u00226aeb3b565d9341afcdb8ade4\u0022,\u0022title\u0022:\u0022SEMINAR\u0022,\u0022deadline\u0022:\u00222026-09-08\u0022,\u0022totalHours\u0022:5,\u0022minDays\u0022:1,\u0022priority\u0022:2,\u0022hoursDone\u0022:0,\u0022completed\u0022:false,\u0022notes\u0022:\u0022\u0022,\u0022createdAt\u0022:\u00222026-11-04T14:04:06.954Z\u0022,\u0022updatedAt\u0022:\u00222026-11-04T14:04:06.954Z\u0022,\u0022__v\u0022:0},{\u0022_id\u0022:\u00226aeb3b8c5d9341afcdb8adea\u0022,\u0022title\u0022:\u0022coding contest\u0022,\u0022deadline\u0022:\u00222026-09-08\u0022,\u0022totalHours\u0022:5,\u0022minDays\u0022:5,\u0022priority\u0022:2,\u0022hoursDone\u0022:0,\u0022completed\u0022:false,\u0022notes\u0022:\u0022\u0022,\u0022createdAt\u0022:\u00222026-11-04T14:05:00.234Z\u0022,\u0022updatedAt\u0022:\u00222026-11-04T14:05:00.234Z\u0022,\u0022__v\u0022:0},{\u0022_id\u0022:\u00226aeb3b2f5d9341afcdb8add7\u0022,\u0022title\u0022:\u0022DWDM ASSIGNMENT\u0022,\u0022deadline\u0022:\u00222026-09-11\u0022,\u0022totalHours\u0022:3,\u0022minDays\u0022:1,\u0022priority\u0022:1,\u0022hoursDone\u0022:0,\u0022completed\u0022:false,\u0022notes\u0022:\u0022\u0022,\u0022createdAt\u0022:\u00222026-11-04T14:03:27.704Z\u0022,\u0022updatedAt\u0022:\u00222026-11-04T14:03:27.704Z\u0022,\u0022__v\u0022:0},{\u0022_id\u0022:\u00226aeb3b6d5d9341afcdb8ade7\u0022,\u0022title\u0022:\u0022AI assigment\u0022,\u0022deadline\u0022:\u00222026-09-15\u0022,\u0022totalHours\u0022:5,\u0022minDays\u0022:1,\u0022priority\u0022:2,\u0022hoursDone\u0022:0,\u0022completed\u0022:false,\u0022notes\u0022:\u0022\u0022,\u0022createdAt\u0022:\u00222026-11-04T14:04:29.555Z\u0022,\u0022updatedAt\u0022:\u00222026-11-04T14:04:29.555Z\u0022,\u0022__v\u0022:0}]",
+        "durationMs": 13
+      },
+      {
+        "name": "attendance-endpoint-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n{\u0022subjects\u0022:[{\u0022_id\u0022:\u00226aeb3ca75d9341afcdb8adfc\u0022,\u0022name\u0022:\u0022dsa\u0022,\u0022held\u0022:165,\u0022attended\u0022:126,\u0022upcoming\u0022:0,\u0022holidays\u0022:0,\u0022target\u0022:75,\u0022remaining\u0022:0,\u0022total\u0022:165,\u0022required\u0022:124,\u0022mustAttend\u0022:0,\u0022canSkip\u0022:0,\u0022possible\u0022:true,\u0022status\u0022:\u0022safe\u0022,\u0022currentPct\u0022:76.4,\u0022maxPossiblePct\u0022:76.4,\u0022minPct\u0022:76.4,\u0022skipNow\u0022:3,\u0022needNow\u0022:0,\u0022advice\u0022:\u0022You are safe. You can skip up to 0 of the 0 remaining classes and still finish at 75% or more.\u0022,\u0022holidayImpact\u0022:{\u0022mustAttendWithout\u0022:0,\u0022canSkipWithout\u0022:0,\u0022classesLost\u0022:0}},{\u0022_id\u0022:\u00226aeb3cdf5d9341afcdb8adff\u0022,\u0022name\u0022:\u0022ai\u0022,\u0022held\u0022:95,\u0022attended\u0022:74,\u0022upcoming\u0022:18,\u0022holidays\u0022:0,\u0022target\u0022:75,\u0022remaining\u0022:18,\u0022total\u0022:113,\u0022required\u0022:85,\u0022mustAttend\u0022:11,\u0022canSkip\u0022:7,\u0022possible\u0022:true,\u0022status\u0022:\u0022watch\u0022,\u0022currentPct\u0022:77.9,\u0022maxPossiblePct\u0022:81.4,\u0022minPct\u0022:65.5,\u0022skipNow\u0022:3,\u0022needNow\u0022:0,\u0022advice\u0022:\u0022Attend at least 11 of the 18 remaining classes (you can skip 7) to finish at 75% or more.\u0022,\u0022holidayImpact\u0022:{\u0022mustAttendWithout\u0022:11,\u0022canSkipWithout\u0022:7,\u0022classesLost\u0022:0}},{\u0022_id\u0022:\u00226aeb3d1e5d9341afcdb8af2b\u0022,\u0022name\u0022:\u0022cn\u0022,\u0022held\u0022:109,\u0022attended\u0022:82,\u0022upcoming\u0022:0,\u0022holidays\u0022:0,\u0022target\u0022:75,\u0022remaining\u0022:0,\u0022total\u0022:109,\u0022required\u0022:82,\u0022mustAttend\u0022:0,\u0022canSkip\u0022:0,\u0022possible\u0022:true,\u0022status\u0022:\u0022safe\u0022,\u0022currentPct\u0022:75.2,\u0022maxPossiblePct\u0022:75.2,\u0022minPct\u0022:75.2,\u0022skipNow\u0022:0,\u0022needNow\u0022:0,\u0022advice\u0022:\u0022You are safe. You can skip up to 0 of the 0 remaining classes and still finish at 75% or more.\u0022,\u0022holidayImpact\u0022:{\u0022mustAttendWithout\u0022:0,\u0022canSkipWithout\u0022:0,\u0022classesLost\u0022:0}}],\u0022overall\u0022:{\u0022held\u0022:369,\u0022attended\u0022:282,\u0022pct\u0022:76.4}}",
+        "durationMs": 12
+      }
+    ],
+    "executions": [
+      {
+        "source": "tests-pass",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "test"
+        ],
+        "cwd": "C:\\Users\\megha\\Downloads\\student-ontrack\\student-ontrack\\client\\src\\server",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "health-endpoint-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "start"
+        ],
+        "cwd": "C:\\Users\\megha\\Downloads\\student-ontrack\\student-ontrack\\client\\src\\server",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tasks-endpoint-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "start"
+        ],
+        "cwd": "C:\\Users\\megha\\Downloads\\student-ontrack\\student-ontrack\\client\\src\\server",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "attendance-endpoint-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "start"
+        ],
+        "cwd": "C:\\Users\\megha\\Downloads\\student-ontrack\\student-ontrack\\client\\src\\server",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}
