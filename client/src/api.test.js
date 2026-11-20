@@ -39,4 +39,17 @@ describe('client API requests', () => {
     });
     expect(result).toEqual({ mustAttend: 20 });
   });
+
+  it('exposes HTTP status codes for authentication and API errors', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'Sign in to access this resource.' }),
+    })));
+
+    await expect(api.getPlan('2026-11-20', 4)).rejects.toMatchObject({
+      message: 'Sign in to access this resource.',
+      status: 401,
+    });
+  });
 });

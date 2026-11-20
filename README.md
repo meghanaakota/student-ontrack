@@ -1,21 +1,20 @@
 # Student OnTrack
 
-A full-stack MERN app with two tools on one landing page:
+A responsive full-stack MERN app with two tools on one landing page:
 
 1. **Study Planner**: add assignments and seminars (deadline, total hours, minimum days, priority). It builds a day-by-day plan showing how long to spend on each task, what is pending, what is at risk, and a 14-day calendar.
 2. **Attendance Tracker**: per-subject attendance against your 75% rule, with holidays counted. Shows classes you must attend, classes you can skip, and a what-if calculator.
 
 Stack: React (Vite) + Express + MongoDB (Mongoose).
 
-## Run it
+## Run locally
 
-You need Node.js 18+ and MongoDB (local install, or a free MongoDB Atlas cluster).
+You need Node.js 18+ and MongoDB (local install, or a MongoDB Atlas cluster). Open two terminals from the project root. For local development, the API generates a temporary session secret if `SESSION_SECRET` is not set; set a persistent secret in `client/src/server/.env` to keep sessions across restarts.
 
 ```bash
 # 1. API
-cd server
+cd client/src/server
 npm install
-cp .env.example .env      # edit MONGODB_URI if you use Atlas
 npm run dev               # http://localhost:5000
 
 # 2. Frontend (new terminal)
@@ -24,15 +23,65 @@ npm install
 npm run dev               # http://localhost:5173
 ```
 
-Open http://localhost:5173.
+Open http://localhost:5173. The Vite development server proxies `/api` requests to the API on port 5000.
 
-Single-server mode: run `npm run build` in `client`, then `npm start` in `server`.
-Express then serves the built site at http://localhost:5000.
+## Use on a phone or another computer on your Wi-Fi
+
+Start the API as above. Then, from `client`, run:
+
+```bash
+npm run dev -- --host 0.0.0.0
+```
+
+Find this computer's private IPv4 address on Windows with `ipconfig`, then open `http://<computer-ip>:5173` on a phone or laptop connected to the same Wi-Fi (for example, `http://192.168.1.25:5173`). Allow Node.js through Windows Firewall for private networks if prompted. This link works only while both development servers and MongoDB are running on the same network. It uses plain HTTP, so only use it on a trusted private Wi-Fi network; use the hosted HTTPS deployment for public or untrusted networks.
+
+## Production single-server mode
+
+From the project root:
+
+```bash
+cd client
+npm install
+npm run build
+cd src/server
+npm install
+npm start
+```
+
+The Express API serves the built frontend and API on port 5000. Configure `MONGODB_URI` in the server environment before starting. Do not expose a local MongoDB instance directly to the internet.
+
+## Accounts and data privacy
+
+Create an account at `/register` with a valid email address and a password of at least 12 characters. Accounts have separate task and attendance records; sign in on your phone and laptop with the same account to see your own data. Existing records from before accounts were added are left unassigned and are not visible to any account; no records are automatically claimed by the first person who signs up.
+
+## Deploy for a public HTTPS URL (Render + MongoDB Atlas)
+
+1. Push this project to a Git provider and create a MongoDB Atlas cluster. Create a database user with a strong unique password.
+2. In Atlas, configure network access for the Render service's outbound IP addresses and copy the cluster connection string. Do not commit the URI or put it in frontend files.
+3. In Render, create a Blueprint from the repository and select the included `render.yaml`. The blueprint builds the client and starts the Express server; Render generates a private `SESSION_SECRET`.
+4. In the Render service's environment settings, set `MONGODB_URI` to the Atlas connection string and deploy. Open the public `https://...onrender.com` URL shown by Render; it works from mobile and desktop browsers.
+
+The app supports password sign-up/login and isolates data by account, but does not yet include email verification or password reset. Before broad public use, add those account recovery/abuse controls and review backups, retention, privacy notice, and Atlas network access. A Render free service may sleep when idle and take time to wake.
+
+## Publish a permanent public URL
+
+Deploy the client and API behind HTTPS on a hosting provider and use a hosted MongoDB database such as MongoDB Atlas. Configure `MONGODB_URI` as a private server-side environment variable, deploy the client build with the API (single-server mode), and use the host's public HTTPS URL. A public deployment requires a hosting account, database configuration, and production security review; the local Wi-Fi link above is not publicly accessible.
 
 ## Tests
 
+The client:
+
 ```bash
-cd server && npm test
+cd client
+npm test
+npm run build
+```
+
+The API:
+
+```bash
+cd client/src/server
+npm test
 ```
 
 Covers the attendance maths and the planner scheduler.
@@ -57,6 +106,10 @@ can skip       = remaining classes - must attend
 
 | Method | Route | Purpose |
 |---|---|---|
+| POST | /api/auth/register | Create an account and sign in |
+| POST | /api/auth/login | Sign in |
+| GET | /api/auth/me | Get the current account |
+| POST | /api/auth/logout | Sign out |
 | GET | /api/tasks/plan?date=YYYY-MM-DD&capacity=4 | Plan for a day, calendar, task summary |
 | POST | /api/tasks | Add a task |
 | POST | /api/tasks/:id/log | Log hours worked |
@@ -66,6 +119,8 @@ can skip       = remaining classes - must attend
 | POST | /api/attendance/:id/mark | Record a class (present or absent) |
 | POST | /api/attendance/calc | Stateless what-if calculator |
 | PATCH / DELETE | /api/attendance/:id | Edit / delete |
+
+Task and attendance endpoints require an authenticated session and only return records owned by that account.
 
 ## Ideas for next steps
 

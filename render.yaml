@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: student-ontrack
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: cd client && npm ci && npm run build && cd src/server && npm ci
+    startCommand: cd client/src/server && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.13.0
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false

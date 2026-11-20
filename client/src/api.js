@@ -5,7 +5,11 @@ async function req(path, { method = 'GET', body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Request failed');
+  if (!res.ok) {
+    const error = new Error(data.error || 'Request failed');
+    error.status = res.status;
+    throw error;
+  }
   return data;
 }
 
@@ -23,6 +27,11 @@ export function prettyDate(s, opts = { day: 'numeric', month: 'short' }) {
 }
 
 export const api = {
+  // account
+  currentUser: () => req('/auth/me'),
+  register: (body) => req('/auth/register', { method: 'POST', body }),
+  login: (body) => req('/auth/login', { method: 'POST', body }),
+  logout: () => req('/auth/logout', { method: 'POST' }),
   // planner / tasks
   getPlan: (date, capacity) => req(`/tasks/plan?date=${date}&capacity=${capacity}`),
   addTask: (body) => req('/tasks', { method: 'POST', body }),
