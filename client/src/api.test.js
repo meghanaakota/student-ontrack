@@ -2,7 +2,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { api } from './api.js';
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
 
 describe('client API requests', () => {
   it('requests the selected planner date and capacity', async () => {
@@ -18,8 +21,27 @@ describe('client API requests', () => {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       body: undefined,
+      credentials: 'include',
     });
     expect(result).toEqual({ date: '2026-11-20' });
+  });
+
+  it('uses the configured API URL and sends session credentials', async () => {
+    vi.stubEnv('VITE_API_URL', 'https://student-ontrack.onrender.com/');
+    vi.resetModules();
+    const { api: configuredApi } = await import('./api.js');
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ user: null }),
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await configuredApi.currentUser();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://student-ontrack.onrender.com/api/auth/me',
+      expect.objectContaining({ credentials: 'include' })
+    );
   });
 
   it('posts the supplied attendance values to the calculator', async () => {
@@ -36,6 +58,7 @@ describe('client API requests', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
+      credentials: 'include',
     });
     expect(result).toEqual({ mustAttend: 20 });
   });

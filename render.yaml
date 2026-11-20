@@ -1,10 +1,11 @@
 services:
   - type: web
     name: student-ontrack
+    branch: modernize/typescript-20261120072029
     runtime: node
     plan: free
     region: singapore
-    buildCommand: cd client && npm ci && npm run build && cd src/server && npm ci
+    buildCommand: cd client && npm ci --include=dev && npm run build && cd src/server && npm ci
     startCommand: cd client/src/server && npm start
     healthCheckPath: /api/health
     envVars:
@@ -16,3 +17,20 @@ services:
         generateValue: true
       - key: MONGODB_URI
         sync: false
+      - key: FRONTEND_URL
+        sync: false
+  - type: web
+    name: student-ontrack-frontend
+    branch: modernize/typescript-20261120072029
+    runtime: static
+    buildCommand: cd client && npm ci --include=dev && npm run build
+    staticPublishPath: client/dist
+    envVars:
+      - key: NODE_VERSION
+        value: 24.13.0
+      - key: VITE_API_URL
+        value: https://student-ontrack.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

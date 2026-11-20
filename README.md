@@ -9,7 +9,7 @@ Stack: React (Vite) + Express + MongoDB (Mongoose).
 
 ## Run locally
 
-You need Node.js 18+ and MongoDB (local install, or a MongoDB Atlas cluster). Open two terminals from the project root. For local development, the API generates a temporary session secret if `SESSION_SECRET` is not set; set a persistent secret in `client/src/server/.env` to keep sessions across restarts.
+You need Node.js 20.19+ (or 22.12+) and MongoDB (local install, or a MongoDB Atlas cluster). Open two terminals from the project root. For local development, the API generates a temporary session secret if `SESSION_SECRET` is not set; set a persistent secret in `client/src/server/.env` to keep sessions across restarts.
 
 ```bash
 # 1. API
@@ -48,24 +48,30 @@ npm install
 npm start
 ```
 
-The Express API serves the built frontend and API on port 5000. Configure `MONGODB_URI` in the server environment before starting. Do not expose a local MongoDB instance directly to the internet.
+The Express API serves the built frontend and API on port 5000. Configure `MONGODB_URI`, `SESSION_SECRET`, and `FRONTEND_URL` (the app's own HTTPS origin) in the server environment before starting. Do not expose a local MongoDB instance directly to the internet.
 
 ## Accounts and data privacy
 
 Create an account at `/register` with a valid email address and a password of at least 12 characters. Accounts have separate task and attendance records; sign in on your phone and laptop with the same account to see your own data. Existing records from before accounts were added are left unassigned and are not visible to any account; no records are automatically claimed by the first person who signs up.
 
-## Deploy for a public HTTPS URL (Render + MongoDB Atlas)
+## Deploy the frontend and API on Render
 
-1. Push this project to a Git provider and create a MongoDB Atlas cluster. Create a database user with a strong unique password.
-2. In Atlas, configure network access for the Render service's outbound IP addresses and copy the cluster connection string. Do not commit the URI or put it in frontend files.
-3. In Render, create a Blueprint from the repository and select the included `render.yaml`. The blueprint builds the client and starts the Express server; Render generates a private `SESSION_SECRET`.
-4. In the Render service's environment settings, set `MONGODB_URI` to the Atlas connection string and deploy. Open the public `https://...onrender.com` URL shown by Render; it works from mobile and desktop browsers.
+The API is deployed at `https://student-ontrack.onrender.com`. The included Blueprint also defines a Render Static Site named `student-ontrack-frontend`, which builds the React app and points it at that API. The frontend is served from one public HTTPS URL; Render rewrites client-side routes such as `/login` to `index.html`.
+
+1. The Blueprint pins both services to the `modernize/typescript-20261120072029` branch, which contains the authenticated backend; `main` currently has the older unauthenticated API. Create or update the Render Blueprint from this repository's root-level `render.yaml`. After merging these changes into `main`, change both `branch` values in `render.yaml` to `main` before syncing the Blueprint.
+2. Create a MongoDB Atlas cluster and database user. Configure Atlas Network Access for Render and set `MONGODB_URI` in the API service's private environment. Never put this value in frontend variables or source control.
+3. Set `SESSION_SECRET` to a random value of at least 32 characters and `FRONTEND_URL` to the exact HTTPS URL assigned to the `student-ontrack-frontend` Static Site. If Render assigns a different URL or you add a custom domain, update `FRONTEND_URL` on the API and `VITE_API_URL` on the Static Site, then redeploy both.
+4. The Static Site build uses `VITE_API_URL=https://student-ontrack.onrender.com`; this is a public API URL, not a secret. Deploy both services and open the Static Site URL to use the app on phones and computers.
+
+The API allows credentialed requests only from the configured frontend origin. Production session cookies are `HttpOnly`, `Secure`, and `SameSite=None` so sign-in can work across the two Render services. Browser third-party-cookie restrictions can interfere with cross-site cookies; for the most reliable sign-in across browsers, use custom frontend/API domains under the same registrable domain (for example, `app.example.edu` and `api.example.edu`) and set `FRONTEND_URL` and `VITE_API_URL` to those domains.
+
+If you already manage the API service outside this Blueprint, configure `MONGODB_URI`, `SESSION_SECRET`, and `FRONTEND_URL` in the existing Render service and create only the Static Site from the same configuration. Render's free web service may sleep when idle and take time to wake.
 
 The app supports password sign-up/login and isolates data by account, but does not yet include email verification or password reset. Before broad public use, add those account recovery/abuse controls and review backups, retention, privacy notice, and Atlas network access. A Render free service may sleep when idle and take time to wake.
 
-## Publish a permanent public URL
+## Use a custom public URL
 
-Deploy the client and API behind HTTPS on a hosting provider and use a hosted MongoDB database such as MongoDB Atlas. Configure `MONGODB_URI` as a private server-side environment variable, deploy the client build with the API (single-server mode), and use the host's public HTTPS URL. A public deployment requires a hosting account, database configuration, and production security review; the local Wi-Fi link above is not publicly accessible.
+After deploying the Render services, add custom domains to the Static Site and API service in Render. For reliable session cookies across browsers, use two hostnames under the same registrable domain (for example, `app.example.edu` and `api.example.edu`), set `FRONTEND_URL` to the frontend origin, and set the Static Site's `VITE_API_URL` to the API origin.
 
 ## Tests
 
@@ -124,6 +130,6 @@ Task and attendance endpoints require an authenticated session and only return r
 
 ## Ideas for next steps
 
-- User accounts (JWT) so each student has their own data.
+- Email verification and password recovery for accounts.
 - Import the timetable and holiday list to fill in class counts automatically.
 - Email or browser reminders for tasks that are at risk.
